@@ -10,6 +10,10 @@ services:
       - "5001:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Database__ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=one_review_db;Username=postgres;Password=postgres
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     container_name: one-review-db
@@ -22,6 +26,11 @@ services:
       - POSTGRES_DB=one_review_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg-isready -U postgres -d one_review_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
