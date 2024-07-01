@@ -1,0 +1,10 @@
+@productId=6612da1b-97b2-4989-bea0-a1417ae31783
+
+POST {{host}}/products/{{productId}}/reviews
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "Rating": 3,
+    "Text": "Yeah but also meh"
+}

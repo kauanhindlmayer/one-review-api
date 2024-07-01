@@ -1,0 +1,6 @@
+@productId=6612da1b-97b2-4989-bea0-a1417ae31783
+@reviewId=c2b58ca0-46bc-4e26-b1b3-c2b37004a1c5
+
+GET {{host}}/products/{{productId}}/reviews/{{reviewId}}
+Authorization: Bearer {{token}}
+Accept: application/json
