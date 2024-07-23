@@ -9,7 +9,7 @@ COPY ["src/OneReview", "OneReview/"]
 WORKDIR /src/OneReview
 RUN dotnet build 'OneReview.csproj' -c Release -o /app/build
 
-FROM build as publish
+FROM build AS publish
 RUN dotnet publish 'OneReview.csproj' -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0

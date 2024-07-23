@@ -1,5 +1,5 @@
 # @name create
-POST {{host}}/products
+POST {{host}}/api/products
 Authorization: Bearer {{token}}
 Content-Type: application/json
 

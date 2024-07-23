@@ -5,26 +5,25 @@ using OneReview.Services;
 namespace OneReview.Controllers;
 
 [ApiController]
-[Route("products/{productId:guid}/[controller]")]
 public class ReviewsController(ReviewsService reviewsService) : ControllerBase
 {
     private readonly ReviewsService _reviewsService = reviewsService;
 
-    [HttpPost]
-    public IActionResult Create(Guid productId, CreateReviewRequest request)
+    [HttpPost(ApiEndpoints.Reviews.Create)]
+    public IActionResult CreateReview(Guid productId, CreateReviewRequest request)
     {
         var review = request.ToDomain(productId);
 
         _reviewsService.Create(review);
 
         return CreatedAtAction(
-            actionName: nameof(Get),
+            actionName: nameof(GetReview),
             routeValues: new { productId, ReviewId = review.Id },
             value: review);
     }
 
-    [HttpGet("{reviewId:guid}")]
-    public IActionResult Get(Guid productId, Guid reviewId)
+    [HttpGet(ApiEndpoints.Reviews.Get)]
+    public IActionResult GetReview(Guid productId, Guid reviewId)
     {
         var review = _reviewsService.Get(productId, reviewId);
 
@@ -33,8 +32,8 @@ public class ReviewsController(ReviewsService reviewsService) : ControllerBase
             : Ok(ReviewResponse.FromDomain(review));
     }
 
-    [HttpGet]
-    public IActionResult List(Guid productId)
+    [HttpGet(ApiEndpoints.Reviews.List)]
+    public IActionResult ListReviews(Guid productId)
     {
         var reviews = _reviewsService.List(productId);
 

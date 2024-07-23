@@ -4,6 +4,7 @@ using OneReview.RequestPipeline;
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services
+        .AddGlobalErrorHandling()
         .AddServices()
         .AddPersistence(builder.Configuration)
         .AddControllers();
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    app.UseGlobalErrorHandling();
     app.MapControllers();
     app.InitializeDatabase();
 }

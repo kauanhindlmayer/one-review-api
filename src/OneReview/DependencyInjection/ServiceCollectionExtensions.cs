@@ -6,6 +6,19 @@ namespace OneReview.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddGlobalErrorHandling(this IServiceCollection services)
+    {
+        services.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+            };
+        });
+
+        return services;
+    }
+
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<ProductsService>();
@@ -20,7 +33,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IDbConnectionFactory, NpgsqlConnectionFactory>(_ =>
         {
-            return new NpgsqlConnectionFactory(configuration[DbConstants.DefaultConnectionStringPath]!);
+            var connectionString = configuration[DbConstants.DefaultConnectionStringPath]!;
+            return new NpgsqlConnectionFactory(connectionString);
         });
         services.AddScoped<ProductsRepository>();
 

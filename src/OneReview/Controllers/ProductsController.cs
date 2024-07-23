@@ -5,26 +5,25 @@ using OneReview.Services;
 namespace OneReview.Controllers;
 
 [ApiController]
-[Route("[controller]")]
 public class ProductsController(ProductsService productsService) : ControllerBase
 {
     private readonly ProductsService _productsService = productsService;
 
-    [HttpPost]
-    public async Task<IActionResult> CreateAsync(CreateProductRequest request)
+    [HttpPost(ApiEndpoints.Products.Create)]
+    public async Task<IActionResult> CreateProduct(CreateProductRequest request)
     {
         var product = request.ToDomain();
 
         await _productsService.CreateAsync(product);
 
         return CreatedAtAction(
-            actionName: nameof(GetAsync),
+            actionName: nameof(GetProduct),
             routeValues: new { ProductId = product.Id },
             value: ProductResponse.FromDomain(product));
     }
 
-    [HttpGet("{productId:guid}")]
-    public async Task<IActionResult> GetAsync(Guid productId)
+    [HttpGet(ApiEndpoints.Products.Get)]
+    public async Task<IActionResult> GetProduct(Guid productId)
     {
         var product = await _productsService.GetAsync(productId);
 
