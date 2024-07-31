@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics;
+using OneReview.Errors;
 using OneReview.Persistence.Database;
 
 namespace OneReview.RequestPipeline;
@@ -13,9 +14,18 @@ public static class WebApplicationExtensions
         {
             var exception = httpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-            return Results.Problem(
-                statusCode: StatusCodes.Status500InternalServerError,
-                detail: exception?.Message);
+            if (exception is null)
+            {
+                return Results.Problem();
+            }
+
+            return exception switch
+            {
+                ServiceException serviceException => Results.Problem(
+                    statusCode: serviceException.StatusCode,
+                    detail: serviceException.ErrorMessage),
+                _ => Results.Problem()
+            };
         });
 
         return app;

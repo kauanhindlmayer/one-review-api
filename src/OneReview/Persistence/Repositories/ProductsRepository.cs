@@ -36,4 +36,20 @@ public class ProductsRepository(IDbConnectionFactory dbConnectionFactory)
             query,
             new { ProductId = productId });
     }
+
+    public async Task<bool> ExistsAsync(Guid productId)
+    {
+        using IDbConnection connection = await _dbConnectionFactory.CreateConnectionAsync();
+
+        string query = @"
+            SELECT COUNT(*)
+            FROM products
+            WHERE id = @ProductId";
+
+        var count = await connection.ExecuteScalarAsync<int>(
+            query,
+            new { ProductId = productId });
+
+        return count > 0;
+    }
 }

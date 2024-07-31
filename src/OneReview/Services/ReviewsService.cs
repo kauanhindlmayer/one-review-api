@@ -1,25 +1,34 @@
 using OneReview.Domain;
+using OneReview.Errors;
+using OneReview.Persistence.Repositories;
 
 namespace OneReview.Services;
 
-public class ReviewsService
+public class ReviewsService(ReviewsRepository reviewsRepository)
 {
-    private static readonly List<Review> ReviewsRepository = [];
+    private readonly ReviewsRepository ReviewsRepository = reviewsRepository;
 
-    public void Create(Review review)
+    public async Task CreateAsync(Review review)
     {
-        ReviewsRepository.Add(review);
+        if (await ReviewsRepository.ExistsAsync(review.ProductId, review.Id))
+        {
+            throw new NotFoundException($"Review with ID {review.Id} already exists");
+        }
+
+        await ReviewsRepository.CreateAsync(review);
     }
 
-    public Review? Get(Guid productId, Guid reviewId)
+    public async Task<Review?> GetAsync(Guid productId, Guid reviewId)
     {
-        return ReviewsRepository.Find(x => x.Id == reviewId);
+        var review = await ReviewsRepository.GetByIdAsync(productId, reviewId);
+
+        return review is null
+            ? throw new NotFoundException($"Review with ID {reviewId} not found")
+            : review;
     }
 
-    internal IReadOnlyList<Review> List(Guid productId)
+    public async Task<IReadOnlyList<Review>> ListAsync(Guid productId)
     {
-        return ReviewsRepository
-            .Where(x => x.ProductId == productId)
-            .ToList();
+        return await ReviewsRepository.ListAsync(productId);
     }
 }

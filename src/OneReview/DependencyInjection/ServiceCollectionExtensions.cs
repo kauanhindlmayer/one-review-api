@@ -37,6 +37,7 @@ public static class ServiceCollectionExtensions
             return new NpgsqlConnectionFactory(connectionString);
         });
         services.AddScoped<ProductsRepository>();
+        services.AddScoped<ReviewsRepository>();
 
         return services;
     }
