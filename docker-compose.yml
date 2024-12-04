@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   webapp:
     container_name: one-review-api
@@ -7,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5001:5001"
+      - 5001:5001
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Database__ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=onereview;Username=postgres;Password=postgres
@@ -19,7 +17,7 @@ services:
     container_name: one-review-db
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

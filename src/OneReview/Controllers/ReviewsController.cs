@@ -5,16 +5,19 @@ using OneReview.Services;
 namespace OneReview.Controllers;
 
 [ApiController]
+[Route("products/{productId:guid}/[controller]")]
 public class ReviewsController(ReviewsService reviewsService) : ControllerBase
 {
     private readonly ReviewsService _reviewsService = reviewsService;
 
-    [HttpPost(ApiEndpoints.Reviews.Create)]
-    public IActionResult CreateReview(Guid productId, CreateReviewRequest request)
+    [HttpPost]
+    public async Task<IActionResult> CreateReview(
+        Guid productId,
+        CreateReviewRequest request)
     {
         var review = request.ToDomain(productId);
 
-        _reviewsService.Create(review);
+        await _reviewsService.CreateAsync(review);
 
         return CreatedAtAction(
             actionName: nameof(GetReview),
@@ -22,20 +25,22 @@ public class ReviewsController(ReviewsService reviewsService) : ControllerBase
             value: review);
     }
 
-    [HttpGet(ApiEndpoints.Reviews.Get)]
-    public IActionResult GetReview(Guid productId, Guid reviewId)
+    [HttpGet("{reviewId:guid}")]
+    public async Task<IActionResult> GetReview(Guid productId, Guid reviewId)
     {
-        var review = _reviewsService.Get(productId, reviewId);
+        var review = await _reviewsService.GetAsync(productId, reviewId);
 
         return review is null
-            ? Problem(detail: $"review not found (review id: {reviewId})", statusCode: StatusCodes.Status404NotFound)
+            ? Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                detail: $"Review not found (review id: {reviewId})")
             : Ok(ReviewResponse.FromDomain(review));
     }
 
-    [HttpGet(ApiEndpoints.Reviews.List)]
-    public IActionResult ListReviews(Guid productId)
+    [HttpGet]
+    public async Task<IActionResult> ListReviews(Guid productId)
     {
-        var reviews = _reviewsService.List(productId);
+        var reviews = await _reviewsService.ListAsync(productId);
 
         var response = reviews
             .ToList()

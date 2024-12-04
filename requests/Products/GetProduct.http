@@ -1,5 +1,5 @@
 @productId=6612da1b-97b2-4989-bea0-a1417ae31783
 
-GET {{host}}/api/products/{{productId}}
+GET {{host}}/products/{{productId}}
 Authorization: Bearer {{token}}
 Content-Type: application/json
